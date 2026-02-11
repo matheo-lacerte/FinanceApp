@@ -23,41 +23,50 @@ const mockData = [
 const categories = [ "Nourriture", "Revenu", "Services publics", "Transport", "Divertissement", "Santé", "Autres" ];
 
 export default function TransactionsPage() {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedMonth, setSelectedMonth] = useState("all");
   const selectClasses = "border border-[color:var(--border)] rounded-md bg-[color:var(--surface)] px-2 py-1 text-sm text-slate-300";
   
+  const filteredTransaction = mockData.filter(t => {
+    const matchesCategory = selectedCategory === "all" || t.category === selectedCategory;
+    const matchesMonth = selectedMonth === "all" || t.date.split("-")[1] === selectedMonth;
+    return matchesCategory && matchesMonth;
+  });
+
   return (
     <main className="space-y-5">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight text-slate-100">Transactions</h1>
-        <p className="text-sm text-slate-400">{mockData.length} operations recentes</p>
+        <p className="text-sm text-slate-400">{filteredTransaction.length} operations recentes</p>
       </header>
 
       <div>
-        <select className={selectClasses}>
+        <select className={selectClasses} value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
           <option value="all">Toutes les categories</option>
           {categories.map((category) => (
             <option key={category} value={category}>{category}</option>
           ))}
         </select>
-        <select className={`ml-2 ${selectClasses}`}>
+        <select className={`ml-2 ${selectClasses}`} value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)}>
           <option value="all">Tous les mois</option>
-          <option value="january">Janvier</option>
-          <option value="february">Février</option>
-          <option value="march">Mars</option>
-          <option value="april">Avril</option>
-          <option value="may">Mai</option>
-          <option value="june">Juin</option>
-          <option value="july">Juillet</option>
-          <option value="august">Août</option>
-          <option value="september">Septembre</option>
-          <option value="october">Octobre</option>
-          <option value="november">Novembre</option>
-          <option value="december">Décembre</option>
+          <option value="01">Janvier</option>
+          <option value="02">Février</option>
+          <option value="03">Mars</option>
+          <option value="04">Avril</option>
+          <option value="05">Mai</option>
+          <option value="06">Juin</option>
+          <option value="07">Juillet</option>
+          <option value="08">Août</option>
+          <option value="09">Septembre</option>
+          <option value="10">Octobre</option>
+          <option value="11">Novembre</option>
+          <option value="12">Décembre</option>
         </select>
       </div>
       <div className="mx-auto max-w-xl space-y-3 md:hidden">
-        {mockData.map((transaction) => {
+        {filteredTransaction.map((transaction) => {
           const sign = transaction.amount < 0 ? "" : "+";
+          
           return (
             <a
               key={transaction.id}
@@ -92,7 +101,7 @@ export default function TransactionsPage() {
             </thead>
 
             <tbody>
-              {mockData.map((t) => {
+              {filteredTransaction.map((t) => {
                 const sign = t.amount < 0 ? "" : "+";
                 return (
                   <tr key={t.id} className="border-t border-[color:var(--border)] text-sm hover:bg-[color:var(--surface-soft)]">
@@ -117,3 +126,4 @@ export default function TransactionsPage() {
     </main>
   );
 }
+
