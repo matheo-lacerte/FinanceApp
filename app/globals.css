@@ -38,3 +38,9 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+select,
+select option {
+  background-color: var(--surface);
+  color: var(--foreground);
+}
