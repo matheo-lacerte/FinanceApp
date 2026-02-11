@@ -1,3 +1,7 @@
+'use client';
+import { mock } from "node:test";
+import { useState } from "react";
+
 const mockData = [
   {
     id: 1,
