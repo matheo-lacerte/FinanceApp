@@ -16,7 +16,11 @@ const mockData = [
   },
 ];
 
+const categories = [ "Nourriture", "Revenu", "Services publics", "Transport", "Divertissement", "Santé", "Autres" ];
+
 export default function TransactionsPage() {
+  const selectClasses = "border border-[color:var(--border)] rounded-md bg-[color:var(--surface)] px-2 py-1 text-sm text-slate-300";
+  
   return (
     <main className="space-y-5">
       <header>
@@ -24,6 +28,29 @@ export default function TransactionsPage() {
         <p className="text-sm text-slate-400">{mockData.length} operations recentes</p>
       </header>
 
+      <div>
+        <select className={selectClasses}>
+          <option value="all">Toutes les categories</option>
+          {categories.map((category) => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
+        <select className={`ml-2 ${selectClasses}`}>
+          <option value="all">Tous les mois</option>
+          <option value="january">Janvier</option>
+          <option value="february">Février</option>
+          <option value="march">Mars</option>
+          <option value="april">Avril</option>
+          <option value="may">Mai</option>
+          <option value="june">Juin</option>
+          <option value="july">Juillet</option>
+          <option value="august">Août</option>
+          <option value="september">Septembre</option>
+          <option value="october">Octobre</option>
+          <option value="november">Novembre</option>
+          <option value="december">Décembre</option>
+        </select>
+      </div>
       <div className="mx-auto max-w-xl space-y-3 md:hidden">
         {mockData.map((transaction) => {
           const sign = transaction.amount < 0 ? "" : "+";
