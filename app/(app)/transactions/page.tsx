@@ -1,6 +1,5 @@
 'use client';
-import { mock } from "node:test";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 const mockData = [
   {
@@ -20,13 +19,13 @@ const mockData = [
   },
 ];
 
-const categories = [ "Nourriture", "Revenu", "Services publics", "Transport", "Divertissement", "Santé", "Autres" ];
+const categories = ["Nourriture", "Revenu", "Services publics", "Transport", "Divertissement", "Santé", "Autres"];
 
 export default function TransactionsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedMonth, setSelectedMonth] = useState("all");
   const selectClasses = "border border-[color:var(--border)] rounded-md bg-[color:var(--surface)] px-2 py-1 text-sm text-slate-300";
-  
+  const [openedTransactionId, setOpenedTransactionId] = useState<number | null>(null);
   const filteredTransaction = mockData.filter(t => {
     const matchesCategory = selectedCategory === "all" || t.category === selectedCategory;
     const matchesMonth = selectedMonth === "all" || t.date.split("-")[1] === selectedMonth;
@@ -66,7 +65,7 @@ export default function TransactionsPage() {
       <div className="mx-auto max-w-xl space-y-3 md:hidden">
         {filteredTransaction.map((transaction) => {
           const sign = transaction.amount < 0 ? "" : "+";
-          
+
           return (
             <a
               key={transaction.id}
@@ -103,20 +102,36 @@ export default function TransactionsPage() {
             <tbody>
               {filteredTransaction.map((t) => {
                 const sign = t.amount < 0 ? "" : "+";
+                const isOpen = openedTransactionId === t.id;
                 return (
-                  <tr key={t.id} className="border-t border-[color:var(--border)] text-sm hover:bg-[color:var(--surface-soft)]">
-                    <td className="p-4 text-slate-400">{t.date}</td>
-                    <td className="p-4 font-medium text-slate-100">{t.merchant}</td>
-                    <td className="p-4 text-slate-400">{t.category}</td>
-                    <td
-                      className={`p-4 text-right font-semibold ${
-                        t.amount < 0 ? "text-rose-300" : "text-emerald-300"
-                      }`}
-                    >
-                      {sign}
-                      {t.amount.toFixed(2)} $
-                    </td>
-                  </tr>
+                  <Fragment key={t.id}>
+                    <tr onClick={() => setOpenedTransactionId(isOpen ? null : t.id)} className="border-t border-[color:var(--border)] text-sm hover:bg-[color:var(--surface-soft)]">
+                      <td className="p-4 text-slate-400">{t.date}</td>
+                      <td className="p-4 font-medium text-slate-100">{t.merchant}</td>
+                      <td className="p-4 text-slate-400">{t.category}</td>
+                      <td
+                        className={`p-4 text-right font-semibold ${t.amount < 0 ? "text-rose-300" : "text-emerald-300"
+                          }`}
+                      >
+                        {sign}
+                        {t.amount.toFixed(2)} $
+                      </td>
+                    </tr>
+                    {isOpen && (
+                      <tr className="border-t border-[color:var(--border)] bg-[color:var(--surface-soft)] text-sm">
+                        <td colSpan={4} className="px-4 py-2 text-slate-400">
+                          <div className="flex w-full items-center">
+                            <p>Actions rapides</p>
+                            <div className="ml-auto flex gap-2">
+                              <button className=" rounded bg-blue-500 px-3 py-1 text-white">Modifier</button>
+                              <button className=" rounded bg-red-500 px-3 py-1 text-white">Supprimer</button>
+                            </div>
+                          </div>
+
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 );
               })}
             </tbody>
@@ -126,4 +141,3 @@ export default function TransactionsPage() {
     </main>
   );
 }
-
