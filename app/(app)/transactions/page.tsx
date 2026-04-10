@@ -1,7 +1,8 @@
 'use client';
 import { Fragment, useState } from "react";
-import { mockTransactions } from "@/data/mock-transaction";
-
+import { getTransactions } from "@/lib/transaction";
+import { Transaction } from "@/types/transaction";
+import Link from "next/link";
 
 const categories = ["Nourriture", "Revenu", "Services publics", "Transport", "Divertissement", "Santé", "Autres"];
 const sortOptions = [
@@ -21,6 +22,7 @@ function parseLocalDate(dateString: string) {
   return new Date(year, month - 1, day);
 }
 export default function TransactionsPage() {
+  const [transactions, setTransactions] = useState<Transaction[]>(getTransactions());
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [searchTermMarchand, setSearchTermMarchand] = useState("")
@@ -28,7 +30,7 @@ export default function TransactionsPage() {
   const searchMarchand = "border border-[color:var(--border)] rounded-md bg-[color:var(--surface)] px-2 py-1 text-sm text-slate-300 text-center";
   const [openedTransactionId, setOpenedTransactionId] = useState<number | null>(null);
   const [dateSortOrder, setDateSortOrder] = useState<"asc" | "desc">("desc");
-  const filteredTransactions = mockTransactions.filter(t => {
+  const filteredTransactions = transactions.filter(t => {
     const matchesCategory = selectedCategory === "all" || t.category === selectedCategory;
     const matchesMonth = selectedMonth === "all" || t.date.split("-")[1] === selectedMonth;
     const matchesMarchand = searchTermMarchand === "" || t.merchant.toLowerCase().startsWith(searchTermMarchand.toLowerCase());
