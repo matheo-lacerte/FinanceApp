@@ -1,10 +1,12 @@
 'use client';
-import { Fragment, useState } from "react";
-import { getTransactions } from "@/lib/transaction";
+import { Fragment, useState, useEffect } from "react";
+import { getTransactions, saveTransactions } from "@/lib/transaction";
 import { Transaction } from "@/types/transaction";
+import { getCategories } from "@/lib/category";
+import { mockTransactions } from "@/data/mock-transaction";
 import Link from "next/link";
 
-const categories = ["Nourriture", "Revenu", "Services publics", "Transport", "Divertissement", "Santé", "Autres"];
+const categories = getCategories().map(c => c.name);
 const sortOptions = [
   { value: "desc", label: "plus recentes" },
   { value: "asc", label: "plus anciennes" },
@@ -22,7 +24,12 @@ function parseLocalDate(dateString: string) {
   return new Date(year, month - 1, day);
 }
 export default function TransactionsPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>(getTransactions());
+  const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+
+  useEffect(() => {
+    setTransactions(getTransactions());
+  }, []);
+
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [searchTermMarchand, setSearchTermMarchand] = useState("")
@@ -43,6 +50,13 @@ export default function TransactionsPage() {
 
     return parseLocalDate(a.date).getTime() - parseLocalDate(b.date).getTime();
   })
+
+  function handleDeleteTransaction(id: number) {
+    const updatedTransactions = transactions.filter((transaction) => transaction.id !== id)
+    saveTransactions(updatedTransactions);
+    setTransactions(updatedTransactions);
+    setOpenedTransactionId(null);
+  }
 
   return (
     <main className="space-y-5">
@@ -106,25 +120,54 @@ export default function TransactionsPage() {
           <div className="mx-auto max-w-xl space-y-3 md:hidden">
             {sortedTransactions.map((transaction) => {
               const sign = transaction.amount < 0 ? "" : "+";
+              const isOpen = openedTransactionId === transaction.id;
 
               return (
-                <a
+                <article
                   key={transaction.id}
-                  href={`/transactions/${transaction.id}`}
-                  className="block rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 transition hover:border-slate-500/80"
+                  className="overflow-hidden rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] transition hover:border-slate-500/80"
                 >
-                  <div className="flex justify-between font-semibold">
-                    <div className="text-slate-100">{transaction.merchant}</div>
-                    <div className={transaction.amount < 0 ? "text-rose-300" : "text-emerald-300"}>
-                      {sign}
-                      {currencyFormatter.format(transaction.amount)}
+                  <button
+                    type="button"
+                    onClick={() => setOpenedTransactionId(isOpen ? null : transaction.id)}
+                    className="block w-full text-left p-4"
+                  >
+                    <div className="flex justify-between font-semibold">
+                      <div className="text-slate-100">{transaction.merchant}</div>
+                      <div className={transaction.amount < 0 ? "text-rose-300" : "text-emerald-300"}>
+                        {sign}
+                        {currencyFormatter.format(transaction.amount)}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="text-sm text-slate-400">
-                    {transaction.category} • {dateFormatter.format(parseLocalDate(transaction.date))}
-                  </div>
-                </a>
+                    <div className="text-sm text-slate-400">
+                      {transaction.category} • {dateFormatter.format(parseLocalDate(transaction.date))}
+                    </div>
+                  </button>
+                  {isOpen && (
+                    <div className="border-t border-[color:var(--border)] bg-[color:var(--surface-soft)] px-4 py-3">
+                      <p className="text-sm text-slate-400">Notes : {transaction.notes || "Aucune note"}</p>
+
+                      <div className="mt-3 flex gap-2">
+                        <Link
+                          href={`/transactions/${transaction.id}/edit`}
+                          className="rounded bg-blue-500 px-3 py-1 text-sm text-white"
+                        >
+                          Modifier
+                        </Link>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTransaction(transaction.id)}
+                          className="rounded bg-red-500 px-3 py-1 text-sm text-white"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                </article>
               );
             })}
           </div>
@@ -174,10 +217,20 @@ export default function TransactionsPage() {
                           <tr className="border-t border-[color:var(--border)] bg-[color:var(--surface-soft)] text-sm">
                             <td colSpan={4} className="px-4 py-2 text-slate-400">
                               <div className="flex w-full items-center">
-                                <p>Actions rapides</p>
+                                <p>Notes : {t.notes}</p>
                                 <div className="ml-auto flex gap-2">
-                                  <button className=" rounded bg-blue-500 px-3 py-1 text-white">Modifier</button>
-                                  <button className=" rounded bg-red-500 px-3 py-1 text-white">Supprimer</button>
+                                  <Link
+                                    href={`/transactions/${t.id}/edit`}
+                                    onClick={(event) => event.stopPropagation()}
+                                    className="rounded bg-blue-600 px-3 py-1 text-sm font-medium !text-white visited:!text-white hover:!text-white"
+
+                                  >
+                                    Modifier
+                                  </Link>
+                                  <button
+                                    onClick={(event) => { event.stopPropagation(); handleDeleteTransaction(t.id); }}
+                                    className=" rounded bg-red-500 px-3 py-1 text-white">Supprimer
+                                  </button>
                                 </div>
                               </div>
 
