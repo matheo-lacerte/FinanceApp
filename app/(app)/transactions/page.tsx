@@ -47,8 +47,20 @@ export default function TransactionsPage() {
   return (
     <main className="space-y-5">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-100">Transactions</h1>
+        <div className="flex">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-100">Transactions</h1>
+          <Link
+            href="/transactions/new"
+            className="border border-green-400/35 bg-green-500/20 font-medium text-green-100 block rounded-lg px-3 py-2 text-sm transition ml-auto hover:text-slate-100 hover:bg-green-300/20 hover:border-green-300/35"
+          >
+            Ajouter des transactions
+          </Link>
+
+        </div>
+
         <p className="text-sm text-slate-400">{filteredTransactions.length} opération{filteredTransactions.length > 1 && ("s")}</p>
+
+
       </header>
 
       <div className="flex flex-col gap-2 md:flex-row">
