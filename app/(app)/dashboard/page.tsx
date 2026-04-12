@@ -2,6 +2,7 @@
 import { mockTransactions } from "@/data/mock-transaction";
 import type { Transaction } from "@/types/transaction";
 import { useState, useSyncExternalStore } from "react";
+import DashboardExpenseChart from "@/components/dashboard-expense-chart";
 
 
 const dateFormatter = new Intl.DateTimeFormat("fr-CA", {
@@ -193,6 +194,12 @@ export default function DashboardPage() {
                         <h2 className="text-lg font-semibold text-slate-100">Dépenses par catégorie</h2>
                         <p className="text-sm text-slate-400">Répartition actuelle des sorties d&apos;argent</p>
                     </div>
+
+                    {expenseCategoryList.length > 0 && (
+                        <div className="mb-6">
+                            <DashboardExpenseChart expenseCategoryList={expenseCategoryList} />
+                        </div>
+                    )}
 
                     <div className="space-y-3">
                         {expenseCategoryList.length === 0 ? (
