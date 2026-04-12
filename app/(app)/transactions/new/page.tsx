@@ -103,7 +103,7 @@ export default function NewTransactionPage() {
 
                         <div>
                             <label className="text-sm font-medium text-slate-200">
-                                Date
+                                date
                             </label>
                             <input
                                 type="date"

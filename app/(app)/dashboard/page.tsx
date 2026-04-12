@@ -92,11 +92,11 @@ export default function DashboardPage() {
                         Dashboard
                     </h1>
                     <p className="text-sm text-slate-400">
-                        Vue d'ensemble
+                        Vue d&apos;ensemble
                     </p>
                 </div>
             </header>
-            
+
             <section className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 shadow-[0_18px_45px_rgba(0,0,0,0.18)]">
                     <p className="text-sm font-medium uppercase tracking-[0.16em] text-slate-400">Revenus</p>
