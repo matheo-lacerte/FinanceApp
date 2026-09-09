@@ -57,41 +57,6 @@ Support for a more complete bank transaction import workflow is planned.
 
 ---
 
-## 🖼️ Screenshots
-
-### Dashboard
-
-\<!-- Add dashboard screenshot here -->
-
-```md
-![Dashboard](./screenshots/dashboard.png)
-```
-
-### Transactions
-
-\<!-- Add transactions screenshot here -->
-
-```md
-![Transactions](./screenshots/transactions.png)
-```
-
-### Add Transaction
-
-\<!-- Add transaction form screenshot here -->
-
-```md
-![Add Transaction](./screenshots/add-transaction.png)
-```
-
-### Mobile View
-
-\<!-- Optional mobile screenshot -->
-
-```md
-![Mobile View](./screenshots/mobile.png)
-```
-
----
 
 ## 🛠️ Tech Stack
 
